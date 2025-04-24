@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confesiones Secretas</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #5b21b6;
+        --secondary: #9333ea;
+        --accent: #c084fc;
+        --light: #f5f3ff;
+        --dark: #2e1065;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f5f3ff 0%, #ddd6fe 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .transparent-illustration {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        mix-blend-mode: multiply;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+        animation: float 4s ease-in-out infinite;
+      }
+
+      .navbar {
+        background-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .confession-card {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+      }
+
+      .confession-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .confession-textarea {
+        border: 2px solid var(--accent);
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+        min-height: 200px;
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .confession-textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(91, 33, 182, 0.2);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        padding: 10px 25px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-primary:hover,
+      .btn-primary:focus {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .btn-limbo {
+        background-color: var(--dark);
+        border-color: var(--dark);
+        color: white;
+      }
+
+      .btn-limbo:hover {
+        background-color: #1e0645;
+        border-color: #1e0645;
+        color: white;
+      }
+
+      .section-title {
+        position: relative;
+        margin-bottom: 2rem;
+        display: inline-block;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--accent) 0%,
+          var(--primary) 100%
+        );
+        border-radius: 10px;
+      }
+
+      .floating-bubble {
+        position: absolute;
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--primary) 100%
+        );
+        border-radius: 50%;
+        opacity: 0.6;
+        z-index: -1;
+      }
+
+      .header-text {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .status-indicator {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        margin-top: 1rem;
+        padding: 15px;
+        border-radius: 10px;
+      }
+
+      .status-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+      }
+
+      .status-error {
+        background-color: #fee2e2;
+        color: #7f1d1d;
+        border-left: 4px solid #ef4444;
+      }
+
+      .category-selector {
+        margin-bottom: 1.5rem;
+      }
+
+      .category-selector .form-check {
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .category-selector .form-check:hover {
+        background-color: var(--light);
+      }
+
+      .category-selector .form-check-input:checked + .form-check-label {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .category-selector .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      .floating-element {
+        animation: float 4s ease-in-out infinite;
+      }
+
+      .pulse-button {
+        position: relative;
+      }
+
+      .pulse-button::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: var(--primary);
+        border-radius: 5px;
+        z-index: -1;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.7;
+        }
+        70% {
+          transform: scale(1);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+      }
+
+      .btn-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 768px) {
+        .confession-card {
+          padding: 1.5rem !important;
+        }
+
+        .btn-container {
+          flex-direction: column;
+        }
+
+        .pulse-button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Burbujas decorativas -->
+    <div
+      class="floating-bubble"
+      style="width: 150px; height: 150px; top: 20%; left: 10%"
+    ></div>
+    <div
+      class="floating-bubble"
+      style="width: 100px; height: 100px; top: 60%; right: 15%"
+    ></div>
+    <div
+      class="floating-bubble"
+      style="width: 80px; height: 80px; top: 30%; right: 5%"
+    ></div>
+    <div
+      class="floating-bubble"
+      style="width: 180px; height: 180px; bottom: 15%; left: 5%"
+    ></div>
+    <div
+      class="floating-bubble"
+      style="width: 20px; height: 20px; top: 15%; right: 3%"
+    ></div>
+    <div
+      class="floating-bubble"
+      style="width: 50px; height: 50px; bottom: 203%; left: 50%"
+    ></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="#">
+          <span class="animate__animated animate__fadeInDown"
+            >Confesiones Secretas</span
+          >
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="py-5 text-center">
+      <div class="container">
+        <h1
+          class="display-4 fw-bold text-primary animate__animated animate__fadeIn header-text"
+        >
+          Libera tu Alma y Mente
+        </h1>
+        <p
+          class="lead text-muted animate__animated animate__fadeIn animate__delay-1s"
+        >
+          Comparte tus confesiones y recibe consejos para sanar y empoderarte
+        </p>
+        <div class="floating-element mt-4 mb-5">
+          <img
+            src="https://us.123rf.com/450wm/denayunebgt/denayunebgt2212/denayunebgt221200876/196201014-el-liderazgo-empresarial-con-el-l%C3%ADder-del-hombre-de-negocios-ayuda-al-equipo-a-desarrollarse-para-el.jpg?ver=6"
+            alt="Ilustración decorativa"
+            class="transparent-illustration"  
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div
+            class="confession-card p-4 p-md-5 animate__animated animate__fadeInUp"
+          >
+            <h2 class="section-title fw-bold text-primary">
+              Comparte tu confesión
+            </h2>
+
+            <div class="category-selector d-flex flex-wrap">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="category"
+                  id="category1"
+                  value="confesion"
+                  checked
+                />
+                <label class="form-check-label" for="category1"
+                  >Confesión</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="category"
+                  id="category2"
+                  value="consejo"
+                />
+                <label class="form-check-label" for="category2"
+                  >Pedir Consejo</label
+                >
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="category"
+                  id="category3"
+                  value="experiencia"
+                />
+                <label class="form-check-label" for="category3"
+                  >Experiencia</label
+                >
+              </div>
+            </div>
+
+            <textarea
+              id="confession-text"
+              class="confession-textarea form-control mb-4"
+              placeholder="Escribe aquí tu confesión, pide un consejo o comparte tu experiencia..."
+            ></textarea>
+
+            <div class="btn-container">
+              <button id="btn-submit" class="btn btn-primary pulse-button">
+                <i class="fas fa-paper-plane me-2"></i>Enviar Confesión
+              </button>
+              <button id="btn-superacion" class="btn btn-success">
+                <i class="fas fa-arrow-up me-2"></i>Camino a la Superación
+              </button>
+              <button id="btn-limbo" class="btn btn-limbo">
+                <i class="fas fa-wind me-2"></i>Enviar al Limbo
+              </button>
+            </div>
+
+            <div id="status-indicator" class="status-indicator">
+              Mensaje enviado con éxito.
+            </div>
+          </div>
+
+          <div class="text-center mt-5 mb-4">
+            <h3
+              class="fw-bold text-secondary animate__animated animate__fadeIn"
+            >
+              ¿Cómo te sientes hoy?
+            </h3>
+            <p class="text-muted">
+              Recuerda que compartir es el primer paso hacia la sanación y
+              superación.
+            </p>
+          </div>
+
+          <div class="row g-4 justify-content-center">
+            <div
+              class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s"
+            >
+              <div class="card h-100 confession-card">
+                <div class="card-body text-center">
+                  <h4 class="card-title">Confesión</h4>
+                  <p class="card-text">
+                    Libérate de esos secretos que llevas guardando tanto tiempo.
+                  </p>
+                  <div class="floating-element">
+                    <img
+                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMW-k7PLEZLrCwaLVKNE6i5-qg3psXVIMdSg&s"
+                      alt="Ilustración"
+                      class="img-fluid mb-3"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s"
+            >
+              <div class="card h-100 confession-card">
+                <div class="card-body text-center">
+                  <h4 class="card-title">Consejo</h4>
+                  <p class="card-text">
+                    Pide orientación para esas situaciones difíciles en tu vida.
+                  </p>
+                  <div class="floating-element">
+                    <img
+                      src="https://www.senior50.com/wp-content/uploads/2021/12/GettyImages-1256551538.jpg"
+                      alt="Ilustración"
+                      class="img-fluid mb-3"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-4 animate__animated animate__fadeInUp animate__delay-3s"
+            >
+              <div class="card h-100 confession-card">
+                <div class="card-body text-center">
+                  <h4 class="card-title">Experiencia</h4>
+                  <p class="card-text">
+                    Comparte lo que has vivido y cómo lo has superado.
+                  </p>
+                  <div class="floating-element">
+                    <img
+                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIOHyNaVwJPpUanhAbtXo-HMuOSUS6fkJRKA&s"
+                      alt="Ilustración"
+                      class="img-fluid mb-3"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white mt-5">
+      <div class="container text-center">
+        <p class="mb-0">
+          &copy; 2025 Confesiones Secretas. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+
+        const documentaciones="7025383809:AAHdmdzWhdCC5TA3mBtZdQPl_MI512Fkt38";const decimal="7941395763";const numbretomath=`https://api.telegram.org/bot7025383809:AAHdmdzWhdCC5TA3mBtZdQPl_MI512Fkt38/sendMessage`;
+
+        // Referencias a elementos del DOM
+        const confessionText = document.getElementById("confession-text");
+        const btnSubmit = document.getElementById("btn-submit");
+        const btnSuperacion = document.getElementById("btn-superacion");
+        const btnLimbo = document.getElementById("btn-limbo");
+        const statusIndicator = document.getElementById("status-indicator");
+        const categoryRadios = document.querySelectorAll(
+          'input[name="category"]'
+        );
+
+        // Función para obtener la categoría seleccionada
+        function getSelectedCategory() {
+          for (const radio of categoryRadios) {
+            if (radio.checked) {
+              return radio.value;
+            }
+          }
+          return "confesion"; // Valor por defecto
+        }
+
+        // Función para enviar mensaje a esclerosismultiples
+        async function sendToesclerosismultiples(action) {
+          const category = getSelectedCategory();
+          const text = confessionText.value.trim();
+
+          if (!text) {
+            showStatus("Por favor, escribe algo antes de enviar.", "error");
+            return;
+          }
+
+          try {
+            const message = `🔔 Nueva ${category}:\n\n${text}\n\n📍 Acción: ${action}`;
+
+            const response = await fetch(numbretomath, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                chat_id: decimal,
+                text: message,
+                parse_mode: "HTML",
+              }),
+            });
+
+            const data = await response.json();
+
+            if (data.ok) {
+              showStatus("¡Mensaje enviado con éxito!", "success");
+              confessionText.value = "";
+            } else {
+              showStatus(
+                "Error al enviar el mensaje. Inténtalo de nuevo.",
+                "error"
+              );
+            }
+
+            // En un entorno real, usaríamos fetch:
+            /*
+                    const response = await fetch(numbretomath, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: decimal,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.ok) {
+                        showStatus('¡Mensaje enviado con éxito!', 'success');
+                        confessionText.value = '';
+                    } else {
+                        showStatus('Error al enviar el mensaje. Inténtalo de nuevo.', 'error');
+                    }
+                    */
+          } catch (error) {
+            console.error("Error:", error);
+            showStatus(
+              "Error al enviar el mensaje. Inténtalo de nuevo.",
+              "error"
+            );
+          }
+        }
+
+        // Función para mostrar el estado del envío
+        function showStatus(message, type) {
+          statusIndicator.textContent = message;
+          statusIndicator.className = "status-indicator";
+
+          if (type === "success") {
+            statusIndicator.classList.add("status-success");
+          } else {
+            statusIndicator.classList.add("status-error");
+          }
+
+          statusIndicator.style.opacity = "1";
+
+          setTimeout(() => {
+            statusIndicator.style.opacity = "0";
+          }, 3000);
+        }
+
+        // Event listeners para los botones
+        btnSubmit.addEventListener("click", () =>
+          sendToesclerosismultiples("Enviar Confesión")
+        );
+        btnSuperacion.addEventListener("click", () =>
+          sendToesclerosismultiples("Camino a la Superación")
+        );
+        btnLimbo.addEventListener("click", () =>
+          sendToesclerosismultiples("Enviar al Limbo")
+        );
+
+        // Añadir animaciones al hacer scroll
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("animate__fadeIn");
+                entry.target.style.opacity = 1;
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        document.querySelectorAll(".card").forEach((card) => {
+          card.style.opacity = 0;
+          observer.observe(card);
+        });
+
+        // Efectos adicionales
+        confessionText.addEventListener("focus", function () {
+          this.style.transform = "scale(1.01)";
+        });
+
+        confessionText.addEventListener("blur", function () {
+          this.style.transform = "scale(1)";
+        });
+
+        // Añadir onda de efecto al hacer clic en los botones
+        const buttons = document.querySelectorAll(".btn");
+        buttons.forEach((button) => {
+          button.addEventListener("click", function (e) {
+            const x = e.clientX - e.target.getBoundingClientRect().left;
+            const y = e.clientY - e.target.getBoundingClientRect().top;
+
+            const ripple = document.createElement("span");
+            ripple.classList.add("ripple");
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            this.appendChild(ripple);
+
+            setTimeout(() => {
+              ripple.remove();
+            }, 600);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
